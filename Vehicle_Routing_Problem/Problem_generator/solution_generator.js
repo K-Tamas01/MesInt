@@ -18,17 +18,15 @@ const solution = ((array, drivers) =>{
             let min_x = array[base].x;
             let min_y = array[base].y;
 
-            let index = 0;
             let distance = Infinity;
 
             for(j = 1; j < array.length; j++){
                 if(base != j && array[j].counter == 0 && (Math.abs(min_x - array[j].x) + Math.abs(min_y - array[j].y)) < distance){
                     distance = Math.abs(min_x - array[j].x) + Math.abs(min_y - array[j].y);
-                    index = j;
+                    base = j;
                 }
             }
             sumDistance += distance;
-            base = index;
             route += base + " -> "; 
             array[base].counter++;
             freeCount -= 1;
