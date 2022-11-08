@@ -10,7 +10,7 @@ const solution = ((array, drivers) =>{
 
     for(k = 0; k < drivers; k++){
 
-        let route = "0 -> ";
+        const route = {driverRoute: [0], distance: 0, probability: 0};
         let base = 0;
         let sumDistance = 0;
 
@@ -27,7 +27,9 @@ const solution = ((array, drivers) =>{
                 }
             }
             sumDistance += distance;
-            route += base + " -> "; 
+            
+            route.driverRoute.push(base);
+
             array[base].counter++;
             freeCount -= 1;
 
@@ -35,21 +37,23 @@ const solution = ((array, drivers) =>{
 
         sumDistance += Math.abs(array[0].x - array[base].x) + Math.abs(array[0].y - array[base].y);
 
-        route += "0";
-
         console.log("\nTruck No.: "+ k);
-        console.log(route);
+        console.log(route.driverRoute);
         console.log("Distance for route: "+sumDistance +" m\n");
 
         allSumDistance += sumDistance;
         
-
+        route.distance = sumDistance;
         routes.push(route);
     }
     
     console.log("Total distance of all routes: "+allSumDistance+" m")
 
-}) 
+})
+
+const geneticAlgorithm = ((population, alldistance) =>{
+    
+})
 
 module.exports = {
     solution

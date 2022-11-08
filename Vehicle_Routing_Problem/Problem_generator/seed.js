@@ -9,13 +9,12 @@ function generator(size){
 
     const seedInit = seed.create();
 
-    seedInit.seed(dateInSec)
+    seedInit.seed('a')
     for(i = 0; i < size; i++) {
         array[i] = {
-            x: seedInit(500),
-            y: seedInit(500),
+            x: seedInit(20),
+            y: seedInit(20),
             counter: 0,
-            id: i
         }
     }
 
