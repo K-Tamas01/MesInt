@@ -12,8 +12,8 @@ function generator(size){
     seedInit.seed('a')
     for(i = 0; i < size; i++) {
         array[i] = {
-            x: seedInit(20),
-            y: seedInit(20),
+            x: seedInit(500),
+            y: seedInit(500),
             counter: 0,
         }
     }

@@ -49,10 +49,18 @@ const solution = ((array, drivers) =>{
     
     console.log("Total distance of all routes: "+allSumDistance+" m")
 
+    geneticAlgorithm(routes, allSumDistance);
+
 })
 
-const geneticAlgorithm = ((population, alldistance) =>{
-    
+const geneticAlgorithm = ((population, sumDistance) =>{
+
+    //Fitness valószínűség
+    for(i = 0; i < population.length; i++){
+        population[i].probability = Number((population[i].distance / sumDistance).toFixed(4))
+    }
+    //Kiválasztás...
+    console.log(population)
 })
 
 module.exports = {
