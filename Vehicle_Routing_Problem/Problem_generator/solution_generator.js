@@ -1,8 +1,10 @@
-const solution = ((array, drivers) =>{
+const { distanceCalc, probabilityCalc, rand, allDrivedDistance } = require("./function");
 
-    let node = ( array.length - 1 ) / drivers ;
+const solution = ((points, drivers) =>{
 
-    let freeCount = array.length - 1;
+    let node = ( points.length - 1 ) / drivers ;
+
+    let freeCount = points.length - 1;
 
     const routes = [];
 
@@ -15,14 +17,14 @@ const solution = ((array, drivers) =>{
         let sumDistance = 0;
 
         for(i = 0 ; freeCount != 0 && i < node; i++){
-            let min_x = array[base].x;
-            let min_y = array[base].y;
+            let min_x = points[base].x;
+            let min_y = points[base].y;
 
             let distance = Infinity;
 
-            for(j = 1; j < array.length; j++){
-                if(base != j && array[j].counter == 0 && (Math.abs(min_x - array[j].x) + Math.abs(min_y - array[j].y)) < distance){
-                    distance = Math.abs(min_x - array[j].x) + Math.abs(min_y - array[j].y);
+            for(j = 1; j < points.length; j++){
+                if(base != j && points[j].counter == 0 && (Math.abs(min_x - points[j].x) + Math.abs(min_y - points[j].y)) < distance){
+                    distance = Math.abs(min_x - points[j].x) + Math.abs(min_y - points[j].y);
                     base = j;
                 }
             }
@@ -30,16 +32,12 @@ const solution = ((array, drivers) =>{
             
             route.driverRoute.push(base);
 
-            array[base].counter++;
+            points[base].counter++;
             freeCount -= 1;
 
         }
         route.driverRoute.push(0)
-        sumDistance += Math.abs(array[0].x - array[base].x) + Math.abs(array[0].y - array[base].y);
-
-        console.log("\nTruck No.: "+ k);
-        console.log(route.driverRoute);
-        console.log("Distance for route: "+sumDistance +" m\n");
+        sumDistance += Math.abs(points[0].x - points[base].x) + Math.abs(points[0].y - points[base].y);
 
         allSumDistance += sumDistance;
         
@@ -47,75 +45,93 @@ const solution = ((array, drivers) =>{
         routes.push(route);
     }
     
-    console.log("Total distance of all routes: "+allSumDistance+" m")
-
-    geneticAlgorithm(routes, allSumDistance, array);
-
+    return geneticAlgorithm(routes, allSumDistance, points)
 })
 
-const geneticAlgorithm = ((population, sumDistance, array) =>{
-    let allSumDrive = 0
+const geneticAlgorithm = ((initPopulation, sumDistance, points) =>{
+    const generations = [{generation: initPopulation}]
 
-    //Fitness valószínűség
-    for(i = 0; i < population.length; i++){
-        population[i].probability = Number((population[i].distance / sumDistance).toFixed(4))
-        population[i].rand = Number((Math.random()).toFixed(4))
-    }
-    //Kiválasztás...
-    for(i = 0; i < population.length; i++){
-        let selection = 0
-        for(j = 0; j < population.length; j++){
-            selection += population[j].probability
+    for(let gen = 1; gen < 100; gen++){
+        const population = []
+        const objValues = Object.values(generations[0].generation)
+        for(let i = 0; i < generations[gen - 1].generation.length; i++){
+            let obj = {driverRoute: objValues[i].driverRoute, distance: objValues[i].distance, probability: 0, rand: 0, crossOver: undefined, parent: false}
+            population.push(obj)
+        }
 
-            if(population[i].rand <= selection && population[i].parent != true && population[j].parent != true && i != j){
-                population[i].crossOver = j
-                population[i].parent = true
-                population[j].crossOver = i
-                population[j].parent = true
+        //Fitness valószínűség
+        for(let i = 0; i < population.length; i++){
+            population[i].probability = probabilityCalc(population[i].distance, sumDistance)
+            population[i].rand = rand()
+        }
+
+        // //Kiválasztás...
+        for(let i = 0; i < population.length; i++){
+            let selection = 0
+            for(j = 0; j < population.length; j++){
+                selection += population[j].probability
+
+                if(population[i].rand <= selection && population[i].parent != true && population[j].parent != true && i != j){
+                    population[i].crossOver = j
+                    population[i].parent = true
+                    population[j].crossOver = i
+                    population[j].parent = true
+                }
             }
         }
-    }
-    
-    //Keresztezés
-    for(i = 0; i < population.length; i++){
-        let index = population[i].crossOver
-        let firstElement = Math.floor(Math.random() * (population[i].driverRoute.length - 2) + 1)
-        let secondElement = Math.floor(Math.random() * (population[index].driverRoute.length - 2) + 1)
+        
+        //Keresztezés
+        for(let i = 0; i < population.length; i++){
+            if(population[i].crossOver > i){
+                let index = population[i].crossOver
+                let firstElement = Math.floor(Math.random() * (population[i].driverRoute.length - 2) + 1)
+                let secondElement = Math.floor(Math.random() * (population[index].driverRoute.length - 2) + 1)
+                let range = 3
 
-        temp = population[i].driverRoute[firstElement]
-        population[i].driverRoute[firstElement] = population[index].driverRoute[secondElement]
-        population[index].driverRoute[secondElement] = temp
+                for(let k = 0; k < range; k++){
+                    if(firstElement + k > population[i].driverRoute.length - 2){
+                        firstElement = 1
+                    }
+                    if(secondElement + k > population[index].driverRoute.length - 2){
+                        secondElement = 1
+                    }
 
-        population[i].distance = distanceCalc(population[i].driverRoute, array)
-        population[index].distance = distanceCalc(population[index].driverRoute, array)
-    }
-    
-    //Mutáció
-    for(i = 0; i < population.length; i++){
-        let firstElement = Math.floor(Math.random() * (population[i].driverRoute.length - 2) + 1)
-        let secondElement = 0
-
-        do{
-            secondElement = Math.floor(Math.random() * (population[i].driverRoute.length - 2) + 1)
+                    let temp = population[i].driverRoute[firstElement + k]
+                    population[i].driverRoute[firstElement + k] = population[index].driverRoute[secondElement + k]
+                    population[index].driverRoute[secondElement + k] = temp
+                }
+            }
         }
-        while(firstElement == secondElement)
+        
+        //Mutáció
+        for(let i = 0; i < population.length; i++){
+            let firstElement = Math.floor(Math.random() * (population[i].driverRoute.length - 2) + 1)
+            let secondElement = 0
 
-        temp = population[i].driverRoute[firstElement]
-        population[i].driverRoute[firstElement] = population[i].driverRoute[secondElement]
-        population[i].driverRoute[secondElement] = temp
+            do{
+                secondElement = Math.floor(Math.random() * (population[i].driverRoute.length - 2) + 1)
+            }
+            while(firstElement == secondElement)
+
+            temp = population[i].driverRoute[firstElement]
+            population[i].driverRoute[firstElement] = population[i].driverRoute[secondElement]
+            population[i].driverRoute[secondElement] = temp
+
+            population[i].distance = distanceCalc(population[i].driverRoute, points)
+        }
+        generations.push({generation: population})
+    }
+    //Legjobb útvonal hosszúságú generációt kiválasztom
+    let bestGen = 0
+    let bestRoutesDistance = allDrivedDistance(generations[bestGen].generation)
+    for(let i = 0; i < generations.length; i++){
+        if(bestRoutesDistance > allDrivedDistance(generations[i].generation)) {
+            bestGen = i
+            bestRoutesDistance = allDrivedDistance(generations[i].generation)
+        }
     }
 
-    for(i = 0; i < population.length; i++)
-        allSumDrive += population[i].distance
-    console.log(allSumDrive)
-})
-
-const distanceCalc = ((driverRoute, array) =>{
-    let distance = 0
-    for(i = 1; i < driverRoute.length; i++){
-        distance += Math.abs(array[driverRoute[i - 1]].x - array[driverRoute[i]].x) + Math.abs(array[driverRoute[i - 1]].y - array[driverRoute[i]].y)   
-    }
-    return distance
+    return generations[bestGen].generation
 })
 
 module.exports = {
