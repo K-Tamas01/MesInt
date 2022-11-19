@@ -1,57 +1,57 @@
-const { distanceCalc, probabilityCalc, rand, allDrivedDistance } = require("./function");
+const { distanceCalc, probabilityCalc, rand, allDrivedDistance } = require("./function")
 
-const solution = ((points, drivers) =>{
+const solution = ((points, drivers, generationCount) =>{
 
-    let node = ( points.length - 1 ) / drivers ;
+    let node = ( points.length - 1 ) / drivers 
 
-    let freeCount = points.length - 1;
+    let freeCount = points.length - 1
 
-    const routes = [];
+    const routes = []
 
-    let allSumDistance = 0;
+    let allSumDistance = 0
 
     for(k = 0; k < drivers; k++){
 
-        const route = {driverRoute: [0], distance: 0, probability: 0, rand: 0, crossOver: undefined, parent: false};
-        let base = 0;
-        let sumDistance = 0;
+        const route = {driverRoute: [0], distance: 0, probability: 0, rand: 0, crossOver: undefined, parent: false}
+        let base = 0
+        let sumDistance = 0
 
         for(i = 0 ; freeCount != 0 && i < node; i++){
-            let min_x = points[base].x;
-            let min_y = points[base].y;
+            let min_x = points[base].x
+            let min_y = points[base].y
 
-            let distance = Infinity;
+            let distance = Infinity
 
             for(j = 1; j < points.length; j++){
                 if(base != j && points[j].counter == 0 && (Math.abs(min_x - points[j].x) + Math.abs(min_y - points[j].y)) < distance){
-                    distance = Math.abs(min_x - points[j].x) + Math.abs(min_y - points[j].y);
-                    base = j;
+                    distance = Math.abs(min_x - points[j].x) + Math.abs(min_y - points[j].y)
+                    base = j
                 }
             }
-            sumDistance += distance;
+            sumDistance += distance
             
-            route.driverRoute.push(base);
+            route.driverRoute.push(base)
 
-            points[base].counter++;
-            freeCount -= 1;
+            points[base].counter++
+            freeCount -= 1
 
         }
         route.driverRoute.push(0)
-        sumDistance += Math.abs(points[0].x - points[base].x) + Math.abs(points[0].y - points[base].y);
+        sumDistance += Math.abs(points[0].x - points[base].x) + Math.abs(points[0].y - points[base].y)
 
-        allSumDistance += sumDistance;
+        allSumDistance += sumDistance
         
-        route.distance = sumDistance;
-        routes.push(route);
+        route.distance = sumDistance
+        routes.push(route)
     }
     
-    return geneticAlgorithm(routes, allSumDistance, points)
+    return geneticAlgorithm(routes, allSumDistance, points, generationCount)
 })
 
-const geneticAlgorithm = ((initPopulation, sumDistance, points) =>{
+const geneticAlgorithm = ((initPopulation, sumDistance, points, generationCount) =>{
     const generations = [{generation: initPopulation}]
 
-    for(let gen = 1; gen < 100; gen++){
+    for(let gen = 1; gen < generationCount; gen++){
         const population = []
         const objValues = Object.values(generations[0].generation)
         for(let i = 0; i < generations[gen - 1].generation.length; i++){
@@ -135,5 +135,5 @@ const geneticAlgorithm = ((initPopulation, sumDistance, points) =>{
 })
 
 module.exports = {
-    solution
+    solution,
 }

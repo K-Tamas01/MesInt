@@ -1,6 +1,12 @@
 const { generator } = require("./Problem_generator/seed");
 const { solution } = require("./Problem_generator/solution_generator");
 
-const records = generator(10);
+const routePlanning = ((citiesCount, citiesDistance_x, citiesDistance_y, driverCount, generationCount) =>{
+    const records = generator(citiesCount, citiesDistance_x, citiesDistance_y);
 
-solution(records,2);
+    return solution(records,driverCount, generationCount);
+})
+
+module.exports = {
+    routePlanning,
+}

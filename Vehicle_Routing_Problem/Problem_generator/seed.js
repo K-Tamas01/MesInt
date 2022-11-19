@@ -1,6 +1,6 @@
 const seed = require("random-seed");
 
-function generator(size){
+function generator(size, citiesDistance_x, citiesDistance_y){
 
     var array = [{}];
 
@@ -12,8 +12,8 @@ function generator(size){
     seedInit.seed('a')
     for(i = 0; i < size; i++) {
         array[i] = {
-            x: seedInit(20),
-            y: seedInit(20),
+            x: seedInit(citiesDistance_x),
+            y: seedInit(citiesDistance_y),
             counter: 0,
         }
     }
