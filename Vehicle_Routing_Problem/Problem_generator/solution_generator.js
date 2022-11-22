@@ -12,7 +12,7 @@ const solution = ((points, drivers, generationCount) =>{
 
     for(k = 0; k < drivers; k++){
 
-        const route = {driverRoute: [0], distance: 0, probability: 0, rand: 0, crossOver: undefined, parent: false}
+        const route = {driverRoute: [0], coords: [points[0]], distance: 0, probability: 0, rand: 0, crossOver: undefined, parent: false}
         let base = 0
         let sumDistance = 0
 
@@ -21,22 +21,26 @@ const solution = ((points, drivers, generationCount) =>{
             let min_y = points[base].y
 
             let distance = Infinity
+            let coord = null
 
             for(j = 1; j < points.length; j++){
                 if(base != j && points[j].counter == 0 && (Math.abs(min_x - points[j].x) + Math.abs(min_y - points[j].y)) < distance){
                     distance = Math.abs(min_x - points[j].x) + Math.abs(min_y - points[j].y)
                     base = j
+                    coord = points[j]
                 }
             }
             sumDistance += distance
             
             route.driverRoute.push(base)
+            route.coords.push(coord)
 
             points[base].counter++
             freeCount -= 1
 
         }
         route.driverRoute.push(0)
+        route.coords.push(points[0])
         sumDistance += Math.abs(points[0].x - points[base].x) + Math.abs(points[0].y - points[base].y)
 
         allSumDistance += sumDistance
@@ -55,7 +59,7 @@ const geneticAlgorithm = ((initPopulation, sumDistance, points, generationCount)
         const population = []
         const objValues = Object.values(generations[0].generation)
         for(let i = 0; i < generations[gen - 1].generation.length; i++){
-            let obj = {driverRoute: objValues[i].driverRoute, distance: objValues[i].distance, probability: 0, rand: 0, crossOver: undefined, parent: false}
+            let obj = {driverRoute: objValues[i].driverRoute, coords: objValues[i].coords, distance: objValues[i].distance, probability: 0, rand: 0, crossOver: undefined, parent: false}
             population.push(obj)
         }
 
@@ -99,6 +103,10 @@ const geneticAlgorithm = ((initPopulation, sumDistance, points, generationCount)
                     let temp = population[i].driverRoute[firstElement + k]
                     population[i].driverRoute[firstElement + k] = population[index].driverRoute[secondElement + k]
                     population[index].driverRoute[secondElement + k] = temp
+
+                    temp = population[i].coords[firstElement + k]
+                    population[i].coords[firstElement + k] = population[index].coords[secondElement + k]
+                    population[index].coords[secondElement + k] = temp
                 }
             }
         }
@@ -113,9 +121,13 @@ const geneticAlgorithm = ((initPopulation, sumDistance, points, generationCount)
             }
             while(firstElement == secondElement)
 
-            temp = population[i].driverRoute[firstElement]
+            let temp = population[i].driverRoute[firstElement]
             population[i].driverRoute[firstElement] = population[i].driverRoute[secondElement]
             population[i].driverRoute[secondElement] = temp
+
+            temp = population[i].coords[firstElement]
+            population[i].coords[firstElement] = population[i].coords[secondElement]
+            population[i].coords[secondElement] = temp
 
             population[i].distance = distanceCalc(population[i].driverRoute, points)
         }
