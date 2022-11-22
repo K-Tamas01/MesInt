@@ -1,0 +1,62 @@
+.form-container{
+    width: 20%;
+    height: 100%;
+    margin: 10px;
+    padding: 10px;
+    background-color: darkgray;
+    .form-input{
+        margin: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        label{
+            font-style: italic;
+            font-weight: bold;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            color: black;
+            display: block;
+            font-size: 18px;
+        }
+        input{
+            background: none;
+            background-color: darkgray;
+            color: black;
+            display: block;
+            font-size: 18px;
+            border: none;
+            border-radius: 0;
+            border-bottom: 2px solid white;
+
+            &:focus{
+                outline: none;
+                border-bottom: 2px solid black;
+            }
+        }
+    }
+    .form-input-button{
+        margin: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        .input-button{
+            background: none;
+            background-color: white;
+            color: black;
+            display: block;
+            border: none;
+            font-size: 16px;
+            font-style: italic;
+            font-weight: bold;
+            padding: 5px;
+            margin: 3px;
+            height: 45px;
+            width: 125px;
+            text-align: center;
+            cursor: pointer;
+
+            &:hover{
+                background-color: black;
+                color: white;
+            }
+        }
+    }
+}
