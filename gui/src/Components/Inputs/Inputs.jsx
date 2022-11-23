@@ -66,7 +66,7 @@ const Inputs = (() =>{
             min='20'
             max='750' 
             type='number' 
-            name='cities_x'
+            name='cities_X'
             value={cities_X}
             onChange={HanleChange}
             />
@@ -77,7 +77,7 @@ const Inputs = (() =>{
             min='20'
             max='750'
             type='number' 
-            name='cities_y'
+            name='cities_Y'
             value={cities_Y}
             onChange={HanleChange}
             />
@@ -107,8 +107,8 @@ const Inputs = (() =>{
         <div className='form-input'>
           <label>Kérem adjon meg egy seed-et:</label><br/>
           <input 
-            type='number'
-            name='seedValue'
+            type='text'
+            name='seed'
             value={seed}
             onChange={HanleChange}
           />
