@@ -1,4 +1,8 @@
-const { distanceCalc, probabilityCalc, rand, allDrivedDistance } = require("./function")
+const { mutation } = require("./mutation")
+const { min } = require("./function")
+const { crossing } = require("./crossing")
+const { selection } = require("./selection")
+const { fitnesAndRand } = require("./fitnes_rand")
 
 const solution = ((points, drivers, generationCount) =>{
 
@@ -64,86 +68,20 @@ const geneticAlgorithm = ((initPopulation, sumDistance, points, generationCount)
         }
 
         //Fitness valószínűség
-        for(let i = 0; i < population.length; i++){
-            population[i].probability = probabilityCalc(population[i].distance, sumDistance)
-            population[i].rand = rand()
-        }
+        fitnesAndRand(population, sumDistance)
 
         // //Kiválasztás...
-        for(let i = 0; i < population.length; i++){
-            let selection = 0
-            for(j = 0; j < population.length; j++){
-                selection += population[j].probability
-
-                if(population[i].rand <= selection && population[i].parent != true && population[j].parent != true && i != j){
-                    population[i].crossOver = j
-                    population[i].parent = true
-                    population[j].crossOver = i
-                    population[j].parent = true
-                }
-            }
-        }
+        selection(population)
         
         //Keresztezés
-        for(let i = 0; i < population.length; i++){
-            if(population[i].crossOver > i){
-                let index = population[i].crossOver
-                let firstElement = Math.floor(Math.random() * (population[i].driverRoute.length - 2) + 1)
-                let secondElement = Math.floor(Math.random() * (population[index].driverRoute.length - 2) + 1)
-                let range = 3
-
-                for(let k = 0; k < range; k++){
-                    if(firstElement + k > population[i].driverRoute.length - 2){
-                        firstElement = 1
-                    }
-                    if(secondElement + k > population[index].driverRoute.length - 2){
-                        secondElement = 1
-                    }
-
-                    let temp = population[i].driverRoute[firstElement + k]
-                    population[i].driverRoute[firstElement + k] = population[index].driverRoute[secondElement + k]
-                    population[index].driverRoute[secondElement + k] = temp
-
-                    temp = population[i].coords[firstElement + k]
-                    population[i].coords[firstElement + k] = population[index].coords[secondElement + k]
-                    population[index].coords[secondElement + k] = temp
-                }
-            }
-        }
+        crossing(population)
         
         //Mutáció
-        for(let i = 0; i < population.length; i++){
-            let firstElement = Math.floor(Math.random() * (population[i].driverRoute.length - 2) + 1)
-            let secondElement = 0
-
-            do{
-                secondElement = Math.floor(Math.random() * (population[i].driverRoute.length - 2) + 1)
-            }
-            while(firstElement == secondElement)
-
-            let temp = population[i].driverRoute[firstElement]
-            population[i].driverRoute[firstElement] = population[i].driverRoute[secondElement]
-            population[i].driverRoute[secondElement] = temp
-
-            temp = population[i].coords[firstElement]
-            population[i].coords[firstElement] = population[i].coords[secondElement]
-            population[i].coords[secondElement] = temp
-
-            population[i].distance = distanceCalc(population[i].driverRoute, points)
-        }
+        mutation(population, points)
         generations.push({generation: population})
     }
-    //Legjobb útvonal hosszúságú generációt kiválasztom
-    let bestGen = 0
-    let bestRoutesDistance = allDrivedDistance(generations[bestGen].generation)
-    for(let i = 0; i < generations.length; i++){
-        if(bestRoutesDistance > allDrivedDistance(generations[i].generation)) {
-            bestGen = i
-            bestRoutesDistance = allDrivedDistance(generations[i].generation)
-        }
-    }
 
-    return generations[bestGen].generation
+    return generations[min(generations)].generation
 })
 
 module.exports = {

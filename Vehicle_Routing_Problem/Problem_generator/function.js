@@ -23,9 +23,24 @@ function allDrivedDistance(population) {
 }
 
 
+//legjobb indexű generéció kiválasztása
+function min(generations){
+    let index = 0
+    let bestRoutesDistance = allDrivedDistance(generations[index].generation)
+    for(let i = 0; i < generations.length; i++){
+        if(bestRoutesDistance > allDrivedDistance(generations[i].generation)) {
+            index = i
+            bestRoutesDistance = allDrivedDistance(generations[i].generation)
+        }
+    }
+    return index
+}
+
+
 module.exports = {
     distanceCalc,
     probabilityCalc,
     rand,
-    allDrivedDistance
+    allDrivedDistance,
+    min
 }
