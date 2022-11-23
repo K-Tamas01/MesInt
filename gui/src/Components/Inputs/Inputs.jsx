@@ -64,7 +64,7 @@ const Inputs = (() =>{
           <label>Kérem adja meg a városok maximálisan felvehető X koordinátáját:</label><br/>
           <input 
             min='20'
-            max='750' 
+            max='160' 
             type='number' 
             name='cities_X'
             value={cities_X}
@@ -75,7 +75,7 @@ const Inputs = (() =>{
           <label>Kérem adja meg a városok maximálisan felvehető Y koordinátáját:</label><br/>
           <input 
             min='20'
-            max='750'
+            max='160'
             type='number' 
             name='cities_Y'
             value={cities_Y}

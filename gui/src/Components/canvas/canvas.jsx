@@ -30,20 +30,17 @@ const Draw = (() =>{
                 max_x = route.coords[0].x
                 max_y = route.coords[0].y
                 route.coords.map((coord) => {
+                    if(max_x < coord.x) max_x = coord.x
                     if(max_y < coord.y) max_y = coord.y
                 })
             })
 
-            if(max_x <= 50){
+            if(max_x <= 40 && max_y <= 40){
                 scale = 30
-            }else if(max_x > 50 && max_x <= 100){
-                scale = 10
-            }else if(max_x > 100 && max_x <= 150){
-                scale = 10
-            }else if(max_x > 150 && max_x <= 200){
+            }else if((max_x > 40 && max_x <= 100) || (max_y > 40 && max_y <= 100)){
                 scale = 5
-            }else if(max_x > 200 && max_x <= 250){
-                scale = 1
+            }else if((max_x > 70 && max_x <= 150) || (max_y > 70 && max_y <= 150)){
+                scale = 5.1
             }
 
             drawData.map((route) => {
