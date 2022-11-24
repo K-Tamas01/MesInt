@@ -35,38 +35,44 @@ const Draw = (() =>{
                 })
             })
 
-            if(max_x <= 40 && max_y <= 40){
+            if(max_x < 20 && max_y < 20){
                 scale = 30
+            }
+            else if((max_x >= 20 && max_x <= 40) || (max_y >= 20 && max_y <= 40)){
+                scale = 10
             }else if((max_x > 40 && max_x <= 100) || (max_y > 40 && max_y <= 100)){
-                scale = 5
+                scale = 6
             }else if((max_x > 70 && max_x <= 150) || (max_y > 70 && max_y <= 150)){
-                scale = 5.1
+                scale = 2
             }
 
-            drawData.map((route) => {
+            let colorIndex = 0
+            drawData.map((route, rIndex) => {
+                const colors = ['black', 'red', 'cyan', 'darkblue', 'green', 'silver', 'orange', 'yellow']
+                    
+                if(colors.length < rIndex){
+                   colorIndex = 0
+                }
+
                 route.coords.map((_, index) => {
+
                     if(route.coords.length > index + 1){
-                        drawLine({ x: route.coords[index].x, y: route.coords[index].y, x1: route.coords[index + 1].x, y1: route.coords[index + 1].y, index: route.driverRoute[index], scale: scale})
+                        drawLine({ x: route.coords[index].x, y: route.coords[index].y, x1: route.coords[index + 1].x, y1: route.coords[index + 1].y, index: route.driverRoute[index], scale: scale}, {color: colors[colorIndex], width: 2})
                     }
                 })
+
+                colorIndex++
             })
         }
 
     }, [drawData]);
     
     //Vonal rajzolása
-    const drawLine = (info, style = {}) => {
+    const drawLine = (info, style) => {
+
         const { x, y, x1, y1, index, scale } = info;
-
-        const colors = ['black', 'red', 'cyan', 'darkblue', 'green', 'silver', 'orange', 'yellow']
-        let colorIndex = 0
-        if(colors.length < index){
-            colorIndex = 0
-        }
         
-        const { color = colors[colorIndex], width = 1 } = style;
-
-        colorIndex++
+        const { color, width } = style;
     
         ctx.beginPath();
         ctx.font = '25px serif';

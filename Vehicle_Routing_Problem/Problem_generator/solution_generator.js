@@ -1,8 +1,8 @@
-const { mutation } = require("./mutation")
-const { min } = require("./function")
 const { crossing } = require("./crossing")
-const { selection } = require("./selection")
 const { fitnesAndRand } = require("./fitnes_rand")
+const { min } = require("./function")
+const { mutation } = require("./mutation")
+const { selection } = require("./selection")
 
 const solution = ((points, drivers, generationCount) =>{
 
@@ -61,7 +61,8 @@ const geneticAlgorithm = ((initPopulation, sumDistance, points, generationCount)
 
     for(let gen = 1; gen < generationCount; gen++){
         const population = []
-        const objValues = Object.values(generations[0].generation)
+        const objValues =  JSON.parse(JSON.stringify(generations[gen - 1].generation))
+
         for(let i = 0; i < generations[gen - 1].generation.length; i++){
             let obj = {driverRoute: objValues[i].driverRoute, coords: objValues[i].coords, distance: objValues[i].distance, probability: 0, rand: 0, crossOver: undefined, parent: false}
             population.push(obj)
@@ -81,6 +82,7 @@ const geneticAlgorithm = ((initPopulation, sumDistance, points, generationCount)
         generations.push({generation: population})
     }
 
+    //Legjobb útvonal hosszúságú generációt kiválasztom
     return generations[min(generations)].generation
 })
 
